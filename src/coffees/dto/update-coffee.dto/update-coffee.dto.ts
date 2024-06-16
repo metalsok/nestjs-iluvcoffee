@@ -1,4 +1,4 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { Coffee } from '../../entities/coffee.entity';
+import { CreateCoffeeDto } from '../create-cofee.dto/create-coffee.dto';
 
-export class UpdateCoffeeDto extends PartialType(Coffee) {}
+export class UpdateCoffeeDto extends PartialType(CreateCoffeeDto) {}
