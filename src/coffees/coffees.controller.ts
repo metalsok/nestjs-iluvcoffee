@@ -12,7 +12,10 @@ import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-cofee.dto/create-coffee.dto';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { Public } from '../common/decorators/public.decorator';
+import { UpdateCoffeeDto } from './dto/update-coffee.dto/update-coffee.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('coffees')
 @Controller('coffees')
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
@@ -35,8 +38,13 @@ export class CoffeesController {
   }
 
   @Patch(':id/recommend')
-  update(@Param('id') id: number) {
+  recommend(@Param('id') id: number) {
     return this.coffeesService.recommendCoffee(id);
+  }
+
+  @Patch(':id/')
+  update(@Param('id') id: number, @Body() updateCoffeeDto: UpdateCoffeeDto) {
+    return this.coffeesService.update(id, updateCoffeeDto);
   }
 
   @Delete('/:id')

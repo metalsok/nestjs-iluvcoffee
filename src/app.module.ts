@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import appConfig from './config/app.config';
 import { LoggingMiddleware } from './common/middleware/logging/logging.middleware';
 import * as Joi from '@hapi/joi';
+import * as process from "process";
 
 @Module({
   imports: [
