@@ -16,8 +16,8 @@ import { UpdateCoffeeDto } from './dto/update-coffee.dto/update-coffee.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Protocol } from '../common/decorators/protocol.decorator';
 
-@ApiTags('coffees')
-@Controller('coffees')
+@ApiTags('coffee')
+@Controller('coffee')
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
 
@@ -28,7 +28,7 @@ export class CoffeesController {
     @Query() paginationQuery: PaginationQueryDto,
   ) {
     console.log(protocol);
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    //    await new Promise((resolve) => setTimeout(resolve, 5000));
     return this.coffeesService.findAll(paginationQuery);
   }
 
