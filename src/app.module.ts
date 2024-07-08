@@ -8,9 +8,12 @@ import appConfig from './config/app.config';
 import { LoggingMiddleware } from './common/middleware/logging/logging.middleware';
 import * as Joi from '@hapi/joi';
 import * as process from 'process';
+import { MongooseModule } from '@nestjs/mongoose';
+import { MongoCoffeeModule } from './mongo-coffee/mongo-coffee.module';
 
 @Module({
   imports: [
+    MongooseModule.forRoot('mongodb://localhost:27017/nest-course'),
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'postgres', // type of our database
@@ -31,6 +34,7 @@ import * as process from 'process';
       }),
       load: [appConfig],
     }),
+    MongoCoffeeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
