@@ -4,6 +4,7 @@ import { UpdateMongoCoffeeDto } from './dto/update-mongo-coffee.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { MongoCoffee } from './entities/mongo-coffee.entity';
 import { Model } from 'mongoose';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 
 @Injectable()
 export class MongoCoffeeService {
@@ -17,8 +18,12 @@ export class MongoCoffeeService {
     return coffee.save();
   }
 
-  findAll() {
-    return this.coffeeModel.find().exec();
+  findAll(paginationQuery: PaginationQueryDto) {
+    return this.coffeeModel
+      .find()
+      .skip(paginationQuery.offset)
+      .limit(paginationQuery.limit)
+      .exec();
   }
 
   async findOne(id: string) {
