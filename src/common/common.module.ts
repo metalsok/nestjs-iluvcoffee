@@ -4,9 +4,10 @@ import { ApiKeyGuard } from './guards/api-key/api-key.guard';
 import { ConfigModule } from '@nestjs/config';
 import { WrapResponseInterceptor } from './interceptors/wrap-response/wrap-response.interceptor';
 import { TimeoutInterceptor } from './interceptors/timeout/timeout.interceptor';
+import commonConfig from './common.config';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule.forFeature(commonConfig)],
   providers: [
     { provide: APP_GUARD, useClass: ApiKeyGuard },
     {
