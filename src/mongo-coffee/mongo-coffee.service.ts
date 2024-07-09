@@ -58,7 +58,8 @@ export class MongoCoffeeService {
     }
   }
 
-  async recommend(coffee: MongoCoffee) {
+  async recommend(id: string) {
+    const coffee = await this.findOne(id);
     const session = await this.connection.startSession();
     session.startTransaction();
 
