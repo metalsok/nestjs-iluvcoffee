@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Coffee } from './entities/coffee.entity';
-import { Event } from '../events/entities/event.entity';
+import { Event } from './entities/event.entity';
 import { CreateCoffeeDto } from './dto/create-cofee.dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto/update-coffee.dto';
 import { Flavor } from './entities/flavor.entity';

@@ -44,4 +44,9 @@ export class MongoCoffeeController {
   remove(@Param('id') id: string) {
     return this.mongoCoffeeService.remove(id);
   }
+
+  @Patch(':id')
+  recommend(@Param('id') id: string) {
+    return this.mongoCoffeeService.recommend(id);
+  }
 }
