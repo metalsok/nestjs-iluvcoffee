@@ -10,6 +10,10 @@ import * as Joi from '@hapi/joi';
 import * as process from 'process';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoCoffeeModule } from './mongo-coffee/mongo-coffee.module';
+import { UsersModule } from './users/users.module';
+import { HashingService } from './iam/hashing/hashing.service';
+import { BcryptService } from './iam/hashing/bcrypt.service';
+import { IamModule } from './iam/iam.module';
 
 @Module({
   imports: [
@@ -35,6 +39,8 @@ import { MongoCoffeeModule } from './mongo-coffee/mongo-coffee.module';
       load: [appConfig],
     }),
     MongoCoffeeModule,
+    UsersModule,
+    IamModule,
   ],
   controllers: [AppController],
   providers: [AppService],
