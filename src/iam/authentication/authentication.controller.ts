@@ -18,6 +18,13 @@ export class AuthenticationController {
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   signIn(@Body() signInDto: SignInDto) {
+    /*const accessToken = await this.authService.signIn(signInDto);
+    response.cookie('accessToken', accessToken, {
+      secure: true,
+      httpOnly: true,
+      sameSite: true,
+    });*/
+
     return this.service.signIn(signInDto);
   }
 }
