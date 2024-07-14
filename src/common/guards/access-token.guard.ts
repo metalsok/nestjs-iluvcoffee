@@ -19,17 +19,12 @@ export class AccessTokenGuard implements CanActivate {
     private jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
-    private reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
-    const isPublic = this.reflector.get(IS_PUBLIC_KEY, context.getHandler());
 
-    if (isPublic) {
-      return true;
-    }
     if (!token) {
       throw new UnauthorizedException();
     }

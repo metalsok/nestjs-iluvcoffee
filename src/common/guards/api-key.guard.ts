@@ -7,8 +7,8 @@ import {
 import { Observable } from 'rxjs';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
-import { IS_PUBLIC_KEY } from '../../decorators/public.decorator';
-import commonConfig from '../../common.config';
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import commonConfig from '../common.config';
 import { ConfigType } from '@nestjs/config';
 
 @Injectable()

@@ -16,8 +16,8 @@ import { UpdateCoffeeDto } from './dto/update-coffee.dto/update-coffee.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Protocol } from '../common/decorators/protocol.decorator';
 
-@ApiTags('coffee')
-@Controller('coffee')
+@ApiTags('coffees')
+@Controller('coffees')
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
 
