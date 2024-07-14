@@ -10,8 +10,6 @@ import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../../iam/config/jwt.config';
 import { REQUEST_USER_KEY } from '../../iam/iam.constants';
 import { Request } from 'express';
-import { Reflector } from '@nestjs/core';
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
