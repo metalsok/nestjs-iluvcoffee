@@ -11,8 +11,6 @@ import * as process from 'process';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoCoffeeModule } from './mongo-coffee/mongo-coffee.module';
 import { UsersModule } from './users/users.module';
-import { HashingService } from './iam/hashing/hashing.service';
-import { BcryptService } from './iam/hashing/bcrypt.service';
 import { IamModule } from './iam/iam.module';
 
 @Module({

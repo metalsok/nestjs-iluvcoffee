@@ -27,13 +27,13 @@ export class AuthenticationService {
     try {
       const user = new User();
       user.email = signUpDto.email;
-      user.username = signUpDto.email;
       user.password = await this.hashingService.hash(signUpDto.password);
       await this.usersRepository.save(user);
     } catch (err) {
       const pgUniqueViolationErrorCode = '23505';
       if (err.code === pgUniqueViolationErrorCode) {
-        throw new ConflictException();
+        console.log(err.code);
+        throw new ConflictException('User already exists');
       }
       throw err;
     }
