@@ -2,22 +2,20 @@ import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { SignUpDto } from './dto/sign-up.dto';
 import { AuthenticationService } from './authentication.service';
 import { SignInDto } from './dto/sign-in.dto';
-import { Public } from '../../common/decorators/public.decorator';
 import { Auth } from '../decorators/auth/auth.decorator';
 import { AuthType } from '../enums/auth-type.enum';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Auth(AuthType.None)
 @Controller('authentication')
 export class AuthenticationController {
   constructor(private service: AuthenticationService) {}
 
-  @Public()
   @Post('sign-up')
   signUp(@Body() signUpDto: SignUpDto) {
     return this.service.signUp(signUpDto);
   }
 
-  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   signIn(@Body() signInDto: SignInDto) {
@@ -29,5 +27,11 @@ export class AuthenticationController {
     });*/
 
     return this.service.signIn(signInDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh-token')
+  refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.service.refreshTokens(refreshTokenDto);
   }
 }

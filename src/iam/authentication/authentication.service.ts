@@ -12,6 +12,8 @@ import { SignUpDto } from './dto/sign-up.dto';
 import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { ActiveUserData } from '../interfaces/active-user.interface';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -54,16 +56,47 @@ export class AuthenticationService {
     if (!isEqual) {
       throw new UnauthorizedException('Password does not match');
     }
+    return await this.generateTokens(user);
+  }
 
-    const accessToken = await this.jwtService.signAsync(
-      { sub: user.id, email: user.email },
+  private async generateTokens(user: User) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.signToken<Partial<ActiveUserData>>(
+        user.id,
+        this.jwtConfiguration.accessTokenTtl,
+        { email: user.email },
+      ),
+      this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl),
+    ]);
+    return { accessToken, refreshToken };
+  }
+
+  private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
+    return await this.jwtService.signAsync(
+      { sub: userId, ...payload },
       {
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
         secret: this.jwtConfiguration.secret,
-        expiresIn: this.jwtConfiguration.accessTokenTtl,
+        expiresIn,
       },
     );
-    return { accessToken };
+  }
+
+  async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const { sub } = await this.jwtService.verifyAsync(
+        refreshTokenDto.refreshToken,
+        {
+          audience: this.jwtConfiguration.audience,
+          issuer: this.jwtConfiguration.issuer,
+          secret: this.jwtConfiguration.secret,
+        },
+      );
+      const user = await this.usersRepository.findOneByOrFail({ id: sub });
+      return this.generateTokens(user);
+    } catch (err) {
+      throw new UnauthorizedException();
+    }
   }
 }
