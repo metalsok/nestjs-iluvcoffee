@@ -14,6 +14,10 @@ import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ActiveUserData } from '../interfaces/active-user.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { randomUUID } from 'crypto';
+import { RefreshTokenIdsStorage } from './refresh-tokens-ids.storage/refresh-token-ids.storage';
+
+export class InvalidatedRefreshTokenError extends Error {}
 
 @Injectable()
 export class AuthenticationService {
@@ -23,6 +27,7 @@ export class AuthenticationService {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private jwtService: JwtService,
+    private refreshTokenIdStorage: RefreshTokenIdsStorage,
   ) {}
 
   async signUp(signUpDto: SignUpDto) {
@@ -60,15 +65,49 @@ export class AuthenticationService {
   }
 
   private async generateTokens(user: User) {
+    const refreshTokenId = randomUUID();
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<ActiveUserData>>(
         user.id,
         this.jwtConfiguration.accessTokenTtl,
         { email: user.email },
       ),
-      this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl),
+      this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl, {
+        refreshTokenId,
+      }),
     ]);
+    await this.refreshTokenIdStorage.insert(user.id, refreshTokenId);
     return { accessToken, refreshToken };
+  }
+
+  async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const { sub, refreshTokenId } = await this.jwtService.verifyAsync(
+        refreshTokenDto.refreshToken,
+        {
+          audience: this.jwtConfiguration.audience,
+          issuer: this.jwtConfiguration.issuer,
+          secret: this.jwtConfiguration.secret,
+        },
+      );
+      const user = await this.usersRepository.findOneByOrFail({ id: sub });
+      const isValid = await this.refreshTokenIdStorage.validate(
+        user.id,
+        refreshTokenId,
+      );
+      console.log(refreshTokenId);
+      if (isValid) {
+        await this.refreshTokenIdStorage.invalidate(user.id);
+      } else {
+        throw new Error('Refresh token is invalid');
+      }
+      return this.generateTokens(user);
+    } catch (err) {
+      if (err instanceof InvalidatedRefreshTokenError) {
+        throw new UnauthorizedException('Access denied');
+      }
+      throw new UnauthorizedException();
+    }
   }
 
   private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
@@ -81,22 +120,5 @@ export class AuthenticationService {
         expiresIn,
       },
     );
-  }
-
-  async refreshTokens(refreshTokenDto: RefreshTokenDto) {
-    try {
-      const { sub } = await this.jwtService.verifyAsync(
-        refreshTokenDto.refreshToken,
-        {
-          audience: this.jwtConfiguration.audience,
-          issuer: this.jwtConfiguration.issuer,
-          secret: this.jwtConfiguration.secret,
-        },
-      );
-      const user = await this.usersRepository.findOneByOrFail({ id: sub });
-      return this.generateTokens(user);
-    } catch (err) {
-      throw new UnauthorizedException();
-    }
   }
 }
