@@ -15,9 +15,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ActiveUserData } from '../interfaces/active-user.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { randomUUID } from 'crypto';
-import { RefreshTokenIdsStorage } from './refresh-tokens-ids.storage/refresh-token-ids.storage';
-
-export class InvalidatedRefreshTokenError extends Error {}
+import { RefreshTokenIdsStorage } from '../classes/refresh-token-ids.storage';
+import { InvalidatedRefreshTokenError } from '../classes/invalidated-refresh-token.error';
 
 @Injectable()
 export class AuthenticationService {
