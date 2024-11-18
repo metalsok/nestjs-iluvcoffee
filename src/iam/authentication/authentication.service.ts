@@ -12,7 +12,7 @@ import { SignUpDto } from './dto/sign-up.dto';
 import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { ActiveUserData } from '../interfaces/active-user.interface';
+import { ActiveUserData } from '../models/active-user.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { randomUUID } from 'crypto';
 import { RefreshTokenIdsStorage } from '../classes/refresh-token-ids.storage';
@@ -69,7 +69,7 @@ export class AuthenticationService {
       this.signToken<Partial<ActiveUserData>>(
         user.id,
         this.jwtConfiguration.accessTokenTtl,
-        { email: user.email, role: user.role },
+        { email: user.email, role: user.role, permissions: user.permissions },
       ),
       this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl, {
         refreshTokenId,

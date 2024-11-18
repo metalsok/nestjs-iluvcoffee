@@ -15,9 +15,11 @@ import { UpdateCoffeeDto } from './dto/update-coffee.dto/update-coffee.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Protocol } from '../common/decorators/protocol.decorator';
 import { User } from '../common/decorators/user.decorator';
-import { ActiveUserData } from '../iam/interfaces/active-user.interface';
+import { ActiveUserData } from '../iam/models/active-user.interface';
 import { Role } from '../users/enums/role.enum';
 import { Roles } from '../iam/authorization/decorators/roles.decorator';
+import { Permission } from '../iam/models/permission.type';
+import { Permissions } from '../iam/decorators/permissions.decorator';
 
 @ApiTags('coffees')
 @Controller('coffee')
@@ -41,7 +43,8 @@ export class CoffeesController {
     return this.coffeesService.findOne(id);
   }
 
-  @Roles(Role.Admin)
+  //@Roles(Role.Admin)
+  @Permissions(Permission.CreateCoffee)
   @Post()
   create(@Body() createCoffeeDto: CreateCoffeeDto) {
     return this.coffeesService.create(createCoffeeDto);
