@@ -16,9 +16,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { Protocol } from '../common/decorators/protocol.decorator';
 import { User } from '../common/decorators/user.decorator';
 import { ActiveUserData } from '../iam/interfaces/active-user.interface';
+import { Role } from '../users/enums/role.enum';
+import { Roles } from '../iam/authorization/decorators/roles.decorator';
 
 @ApiTags('coffees')
-@Controller('coffees')
+@Controller('coffee')
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
 
@@ -39,6 +41,7 @@ export class CoffeesController {
     return this.coffeesService.findOne(id);
   }
 
+  @Roles(Role.Admin)
   @Post()
   create(@Body() createCoffeeDto: CreateCoffeeDto) {
     return this.coffeesService.create(createCoffeeDto);
@@ -49,11 +52,13 @@ export class CoffeesController {
     return this.coffeesService.recommendCoffee(id);
   }
 
+  @Roles(Role.Admin)
   @Patch(':id/')
   update(@Param('id') id: number, @Body() updateCoffeeDto: UpdateCoffeeDto) {
     return this.coffeesService.update(id, updateCoffeeDto);
   }
 
+  @Roles(Role.Admin)
   @Delete('/:id')
   delete(@Param('id') id: number) {
     return this.coffeesService.remove(id);
